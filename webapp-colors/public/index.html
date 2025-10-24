@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Version Color App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body { display:flex; align-items:center; justify-content:center; transition: background-color .3s ease; }
+    .card { background:#fff; padding:32px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,.15); text-align:center; }
+    h1 { margin-bottom:12px; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; margin-top:8px; }
+    /* Colores por versión */
+    body.v1 { background:#2ecc71; }           /* verde */
+    body.v2 { background:#3498db; }           /* azul */
+    .badge.v1 { background:#eafaf0; color:#1e8449; border:2px solid #2ecc71; }
+    .badge.v2 { background:#eaf2fb; color:#1f5fa7; border:2px solid #3498db; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Version Color App</h1>
+    <p id="desc">Loading…</p>
+    <div id="verBadge" class="badge">…</div>
+  </div>
+
+  <script>
+    async function boot() {
+      try {
+        const res = await fetch('/api/version');
+        const data = await res.json(); // { version: "v1" | "v2" }
+        document.body.className = data.version;
+        document.getElementById('verBadge').textContent = data.version.toUpperCase();
+        document.getElementById('verBadge').className = 'badge ' + data.version;
+        document.getElementById('desc').textContent =
+          data.version === 'v1'
+            ? 'Esta es la versión 1 (fondo verde).'
+            : 'Esta es la versión 2 (fondo azul).';
+      } catch (e) {
+        document.body.style.background = '#f44336';
+        document.getElementById('desc').textContent = 'Error cargando versión';
+        document.getElementById('verBadge').textContent = 'ERROR';
+      }
+    }
+    boot();
+  </script>
+</body>
+</html>
